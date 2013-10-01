@@ -5,12 +5,17 @@
   <caching-scheme-mapping>
 
     <cache-mapping>
-      <cache-name>dist-*</cache-name>
+      <cache-name>posts</cache-name>
       <scheme-name>cache-distributed</scheme-name>
     </cache-mapping>
 
     <cache-mapping>
-      <cache-name>repl-*</cache-name>
+      <cache-name>users</cache-name>
+      <scheme-name>cache-distributed</scheme-name>
+    </cache-mapping>
+
+    <cache-mapping>
+      <cache-name>post-types</cache-name>
       <scheme-name>cache-replicated</scheme-name>
     </cache-mapping>
 
@@ -26,7 +31,7 @@
         <local-scheme>
           <eviction-policy>HYBRID</eviction-policy>
           <unit-calculator>BINARY</unit-calculator>
-          <high-units>1g</high-units>
+          <high-units>0</high-units>
         </local-scheme>
       </backing-map-scheme>
 

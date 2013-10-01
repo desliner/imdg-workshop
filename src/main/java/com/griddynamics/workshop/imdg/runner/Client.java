@@ -16,7 +16,7 @@ public class Client extends Storage {
 
     @Override
     protected void run() {
-        System.out.println(CacheFactory.getCache("a").get(0));
+        System.out.println(CacheFactory.getCache("posts").size());
     }
 
     public static void main(String[] args) {
