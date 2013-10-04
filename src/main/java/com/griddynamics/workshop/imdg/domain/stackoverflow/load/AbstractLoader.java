@@ -1,7 +1,7 @@
 package com.griddynamics.workshop.imdg.domain.stackoverflow.load;
 
 import com.griddynamics.workshop.imdg.domain.stackoverflow.load.setter.ValueSetter;
-import com.griddynamics.workshop.imdg.common.load.Loader;
+import com.griddynamics.workshop.imdg.domain.common.load.Loader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,4 +1,4 @@
-package com.griddynamics.workshop.imdg.common.load;
+package com.griddynamics.workshop.imdg.domain.common.load;
 
 class ProgressTracker {
 
@@ -12,20 +12,27 @@ class ProgressTracker {
     private double averageSpeed;
     private long remainingTime;
 
+    private long completedCountRecords;
+    private double averageSpeedRecords;
+
     public ProgressTracker(long totalCount) {
         this.totalCount = totalCount;
         this.startTime = System.currentTimeMillis();
         this.lastUpdateTime = this.startTime;
     }
 
-    public void update(long completedCount) {
+    public void update(long completedCount, long completedCountRecords) {
         long difference = completedCount - this.completedCount;
+        long differenceRecords = completedCountRecords - this.completedCountRecords;
+
+        this.completedCountRecords = completedCountRecords;
         this.completedCount = completedCount;
         this.remainingCount = totalCount - completedCount;
         this.completedPercentage = (double) completedCount / totalCount * 100;
 
         long currentTime = System.currentTimeMillis();
         averageSpeed = ((double) difference) / ((double) (currentTime - lastUpdateTime)) * 1000;
+        averageSpeedRecords = ((double) differenceRecords) / ((double) (currentTime - lastUpdateTime)) * 1000;
         if (Math.abs(averageSpeed) > 1e-6) {
             remainingTime = (long) (remainingCount / averageSpeed);
         } else {
@@ -60,5 +67,13 @@ class ProgressTracker {
 
     public long getStartTime() {
         return startTime;
+    }
+
+    public long getCompletedCountRecords() {
+        return completedCountRecords;
+    }
+
+    public double getAverageSpeedRecords() {
+        return averageSpeedRecords;
     }
 }

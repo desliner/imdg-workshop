@@ -1,15 +1,14 @@
 package com.griddynamics.workshop.imdg.domain.stackoverflow.model;
 
-import com.griddynamics.workshop.imdg.common.model.Entity;
+import com.griddynamics.workshop.imdg.domain.common.model.Entity;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
  * @author mmyslyvtsev@griddynamics.com
  * @since 9/30/13
  */
-public class User implements Entity<Integer>, Serializable {
+public class User implements Entity<Integer> {
     private int id;
     private int reputation;
     private Date creationDate;

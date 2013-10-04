@@ -1,4 +1,4 @@
-package com.griddynamics.workshop.imdg.common.model;
+package com.griddynamics.workshop.imdg.domain.common.model;
 
 /**
  * @author mmyslyvtsev@griddynamics.com

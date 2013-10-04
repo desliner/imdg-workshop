@@ -1,9 +1,9 @@
 package com.griddynamics.workshop.imdg.preloader;
 
-import com.griddynamics.workshop.imdg.common.load.BatchLoader;
-import com.griddynamics.workshop.imdg.common.load.Loader;
-import com.griddynamics.workshop.imdg.common.load.LoggingLoader;
-import com.griddynamics.workshop.imdg.common.model.Entity;
+import com.griddynamics.workshop.imdg.domain.common.load.BatchLoader;
+import com.griddynamics.workshop.imdg.domain.common.load.Loader;
+import com.griddynamics.workshop.imdg.domain.common.load.TrackingLoader;
+import com.griddynamics.workshop.imdg.domain.common.model.Entity;
 import com.tangosol.net.NamedCache;
 import org.apache.commons.io.IOUtils;
 
@@ -18,7 +18,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author mmyslyvtsev@griddynamics.com
@@ -28,7 +27,7 @@ public class PreloadWorker<T extends Entity> {
 
     private static final int BATCH_SIZE = 1000;
 
-    private static final int THREAD_COUNT = 3;
+    private static final int THREAD_COUNT = 4;
     private static final int QUEUE_SIZE = 20;
 
     private ExecutorService executor;
@@ -52,9 +51,8 @@ public class PreloadWorker<T extends Entity> {
         executor.submit(task);
     }
 
-    public void preload(File file, final NamedCache destination, Loader<T> loader, final long limit) throws Exception {
-        Loader<Collection<T>> finalLoader = new BatchLoader<T>(BATCH_SIZE, new LoggingLoader<T>(loader));
-        final AtomicInteger counter = new AtomicInteger();
+    public void preload(File file, final NamedCache destination, Loader<T> loader, double needed) throws Exception {
+        Loader<Collection<T>> finalLoader = new BatchLoader<T>(BATCH_SIZE, new TrackingLoader<T>(needed, loader));
         Loader.Source source = new Loader.Source();
         source.setFile(file);
         source.setInputStream(new BufferedInputStream(new FileInputStream(file)));
@@ -63,12 +61,13 @@ public class PreloadWorker<T extends Entity> {
                 @Override
                 public boolean onLoad(Collection<T> batch) {
                     putToCache(destination, batch);
-                    return counter.addAndGet(batch.size()) < limit;
+                    return true;
                 }
             });
         } finally {
             IOUtils.closeQuietly(source.getInputStream());
         }
+        executor.shutdown();
     }
 
     private static class PutTask<T extends Entity> implements Runnable {

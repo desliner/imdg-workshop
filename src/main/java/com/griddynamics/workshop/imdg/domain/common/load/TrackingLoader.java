@@ -1,4 +1,4 @@
-package com.griddynamics.workshop.imdg.common.load;
+package com.griddynamics.workshop.imdg.domain.common.load;
 
 import org.joda.time.Duration;
 import org.joda.time.Period;
@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author mmyslyvtsev@griddynamics.com
  * @since 10/1/13
  */
-public class LoggingLoader<T> implements Loader<T> {
+public class TrackingLoader<T> implements Loader<T> {
 
     private static final int STATISTICS_INTERVAL = 5000;
 
@@ -31,9 +31,12 @@ public class LoggingLoader<T> implements Loader<T> {
 
     private final Logger log;
 
+    private final double needed;
+
     private final Loader<T> delegate;
 
-    public LoggingLoader(Loader<T> delegate) {
+    public TrackingLoader(double needed, Loader<T> delegate) {
+        this.needed = needed;
         this.delegate = delegate;
         this.log = LoggerFactory.getLogger(delegate.getClass());
     }
@@ -42,7 +45,7 @@ public class LoggingLoader<T> implements Loader<T> {
     public void load(final Source source, final Callback<T> callback) throws Exception {
         final TrackingInputStream trackingInputStream = new TrackingInputStream(source.getInputStream());
         source.setInputStream(trackingInputStream);
-        long totalLength = source.getFile().length();
+        long totalLength = (long) (source.getFile().length() * needed);
         final ProgressTracker progressTracker = new ProgressTracker(totalLength);
         long startTime = System.currentTimeMillis();
         final AtomicLong lastStatisticsTime = new AtomicLong(startTime);
@@ -51,29 +54,31 @@ public class LoggingLoader<T> implements Loader<T> {
             @Override
             public boolean onLoad(T entity) throws Exception {
                 long currentTime = System.currentTimeMillis();
-                counter.incrementAndGet();
+                long recordsCount = counter.incrementAndGet();
                 if (currentTime - lastStatisticsTime.get() >= STATISTICS_INTERVAL) {
-                    progressTracker.update(trackingInputStream.getCounter());
+                    progressTracker.update(trackingInputStream.getCounter(), recordsCount);
                     Period period = Duration.standardSeconds(progressTracker.getRemainingTime())
                             .toPeriod()
                             .normalizedStandard(PeriodType.dayTime());
-                    log.info("Records: {}, Size: {}/{} ({}%), Speed: {}/sec, ETA: {}",
-                            humanReadableByteCount(counter.get(), true),
+                    log.info("Records: {} at {}/sec, Size: {}/{} at {}/sec ({}%), ETA: {}",
+                            humanReadableByteCount(progressTracker.getCompletedCountRecords(), true),
+                            humanReadableByteCount((long) progressTracker.getAverageSpeedRecords(), true),
                             humanReadableByteCount(progressTracker.getCompletedCount()),
                             humanReadableByteCount(progressTracker.getTotalCount()),
-                            String.format("%.2f", progressTracker.getCompletedPercentage()),
                             humanReadableByteCount((long) progressTracker.getAverageSpeed()),
+                            String.format("%.2f", progressTracker.getCompletedPercentage()),
                             PERIOD_FORMATTER.print(period)
                     );
                     lastStatisticsTime.set(currentTime);
                 }
-                return callback.onLoad(entity);
+                boolean result = callback.onLoad(entity);
+                return progressTracker.getCompletedPercentage() <= 100 && result;
             }
         });
         Period period = Duration.standardSeconds((System.currentTimeMillis() - startTime) / 1000)
                 .toPeriod()
                 .normalizedStandard(PeriodType.dayTime());
-        log.info("Loaded {} in {} msec", humanReadableByteCount(trackingInputStream.getCounter()), PERIOD_FORMATTER.print(period));
+        log.info("Loaded {} records ({}) in {}", humanReadableByteCount(counter.get(), true), humanReadableByteCount(trackingInputStream.getCounter()), PERIOD_FORMATTER.print(period));
     }
 
     public static String humanReadableByteCount(long bytes) {

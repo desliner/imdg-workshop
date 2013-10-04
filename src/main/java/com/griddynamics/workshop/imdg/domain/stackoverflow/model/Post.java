@@ -1,8 +1,7 @@
 package com.griddynamics.workshop.imdg.domain.stackoverflow.model;
 
-import com.griddynamics.workshop.imdg.common.model.Entity;
+import com.griddynamics.workshop.imdg.domain.common.model.Entity;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -10,9 +9,9 @@ import java.util.List;
  * @author mmyslyvtsev@griddynamics.com
  * @since 9/30/13
  */
-public class Post implements Entity<Integer>, Serializable {
+public class Post implements Entity<Integer> {
     private int id;
-    private int postTypeId;
+    private int postTypeId; // TODO: enum
     private Integer acceptedAnswerId;
     private Integer parentId;
     private Date creationDate;

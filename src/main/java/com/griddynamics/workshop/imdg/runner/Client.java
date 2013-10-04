@@ -1,12 +1,15 @@
 package com.griddynamics.workshop.imdg.runner;
 
-import com.tangosol.net.CacheFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author mmyslyvtsev@griddynamics.com
  * @since 9/6/13
  */
 public class Client extends Storage {
+
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
     protected void configure() {
@@ -16,7 +19,6 @@ public class Client extends Storage {
 
     @Override
     protected void run() {
-        System.out.println(CacheFactory.getCache("posts").size());
     }
 
     public static void main(String[] args) {

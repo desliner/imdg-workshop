@@ -1,4 +1,4 @@
-package com.griddynamics.workshop.imdg.common.load;
+package com.griddynamics.workshop.imdg.domain.common.load;
 
 import java.util.ArrayList;
 import java.util.Collection;
