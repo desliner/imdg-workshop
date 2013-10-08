@@ -32,17 +32,19 @@ public class PreloadingClient extends Client {
 
     private void preloadAll(NamedCache usersCache, NamedCache postsCache) {
         try {
+            String path = System.getProperty("imdg.dataPath", "e:\\Downloads\\Stack Exchange Data Dump - Jun 2013\\Content\\stackoverflow.com\\");
+            File pathFile = new File(path);
             new PreloadWorker<User>().preload(
-                    new File("e:\\Downloads\\Stack Exchange Data Dump - Jun 2013\\Content\\stackoverflow.com\\Users.xml"),
+                    new File(pathFile, "Users.xml.gz"),
                     usersCache,
                     new UserLoader(),
                     1.0);
 
             new PreloadWorker<Post>().preload(
-                    new File("e:\\Downloads\\Stack Exchange Data Dump - Jun 2013\\Content\\stackoverflow.com\\Posts.xml"),
+                    new File(pathFile, "Posts.xml.gz"),
                     postsCache,
                     new PostLoader(),
-                    0.5);
+                    1.0);
         } catch (Exception e) {
             log.error("Error while preloading", e);
         }

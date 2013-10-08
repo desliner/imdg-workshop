@@ -1,12 +1,12 @@
 package com.griddynamics.workshop.imdg.util;
 
+import com.griddynamics.workshop.imdg.util.gridkit.ReflectionPofSerializer;
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.reflect.PofValue;
 import net.jpountz.lz4.LZ4Compressor;
 import net.jpountz.lz4.LZ4Factory;
 import net.jpountz.lz4.LZ4FastDecompressor;
-import org.gridkit.coherence.utils.pof.ReflectionPofSerializer;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -20,7 +20,7 @@ import java.util.zip.GZIPOutputStream;
 * @author mmyslyvtsev@griddynamics.com
 * @since 10/2/13
 */
-class CompressingStringCodec implements ReflectionPofSerializer.ObjectPropCodec {
+public class CompressingStringCodec implements ReflectionPofSerializer.ObjectPropCodec {
 
     private final LZ4Factory lz4Factory = LZ4Factory.nativeInstance();
     private final LZ4Compressor lz4Compressor = lz4Factory.fastCompressor();

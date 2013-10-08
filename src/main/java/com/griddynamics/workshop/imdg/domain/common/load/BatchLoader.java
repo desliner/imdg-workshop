@@ -8,21 +8,19 @@ import java.util.List;
  * @author mmyslyvtsev@griddynamics.com
  * @since 10/1/13
  */
-public class BatchLoader<T> implements Loader<Collection<T>> {
+public class BatchLoader<T> extends DelegatingLoader<T> implements Loader<Collection<T>> {
 
     private final int batchSize;
 
-    private final Loader<T> delegate;
-
     public BatchLoader(int batchSize, Loader<T> delegate) {
+        super(delegate);
         this.batchSize = batchSize;
-        this.delegate = delegate;
     }
 
     @Override
     public void load(Source source, final Callback<Collection<T>> callback) throws Exception {
         final List<T> batch = new ArrayList<T>(batchSize);
-        delegate.load(source, new Callback<T>() {
+        getDelegate().load(source, new Callback<T>() {
             @Override
             public boolean onLoad(T entity) throws Exception {
                 batch.add(entity);

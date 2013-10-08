@@ -1,6 +1,7 @@
 package com.griddynamics.workshop.imdg.preloader;
 
 import com.griddynamics.workshop.imdg.domain.common.load.BatchLoader;
+import com.griddynamics.workshop.imdg.domain.common.load.InflatingLoader;
 import com.griddynamics.workshop.imdg.domain.common.load.Loader;
 import com.griddynamics.workshop.imdg.domain.common.load.TrackingLoader;
 import com.griddynamics.workshop.imdg.domain.common.model.Entity;
@@ -52,7 +53,7 @@ public class PreloadWorker<T extends Entity> {
     }
 
     public void preload(File file, final NamedCache destination, Loader<T> loader, double needed) throws Exception {
-        Loader<Collection<T>> finalLoader = new BatchLoader<T>(BATCH_SIZE, new TrackingLoader<T>(needed, loader));
+        Loader<Collection<T>> finalLoader = new BatchLoader<T>(BATCH_SIZE, new TrackingLoader<T>(needed, new InflatingLoader<T>(loader)));
         Loader.Source source = new Loader.Source();
         source.setFile(file);
         source.setInputStream(new BufferedInputStream(new FileInputStream(file)));

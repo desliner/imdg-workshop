@@ -5,8 +5,6 @@ import org.joda.time.Period;
 import org.joda.time.PeriodType;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,7 +14,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author mmyslyvtsev@griddynamics.com
  * @since 10/1/13
  */
-public class TrackingLoader<T> implements Loader<T> {
+public class TrackingLoader<T> extends DelegatingLoader<T> implements Loader<T> {
 
     private static final int STATISTICS_INTERVAL = 5000;
 
@@ -29,16 +27,11 @@ public class TrackingLoader<T> implements Loader<T> {
             .appendSeconds().appendSuffix(" second", " seconds")
             .toFormatter();
 
-    private final Logger log;
-
     private final double needed;
 
-    private final Loader<T> delegate;
-
     public TrackingLoader(double needed, Loader<T> delegate) {
+        super(delegate);
         this.needed = needed;
-        this.delegate = delegate;
-        this.log = LoggerFactory.getLogger(delegate.getClass());
     }
 
     @Override
@@ -50,7 +43,7 @@ public class TrackingLoader<T> implements Loader<T> {
         long startTime = System.currentTimeMillis();
         final AtomicLong lastStatisticsTime = new AtomicLong(startTime);
         final AtomicLong counter = new AtomicLong();
-        delegate.load(source, new Callback<T>() {
+        getDelegate().load(source, new Callback<T>() {
             @Override
             public boolean onLoad(T entity) throws Exception {
                 long currentTime = System.currentTimeMillis();
