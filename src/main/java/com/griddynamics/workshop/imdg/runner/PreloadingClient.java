@@ -7,7 +7,6 @@ import com.griddynamics.workshop.imdg.domain.stackoverflow.model.User;
 import com.griddynamics.workshop.imdg.preloader.PreloadWorker;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
-import com.tangosol.util.extractor.ReflectionExtractor;
 
 import java.io.File;
 
@@ -22,10 +21,10 @@ public class PreloadingClient extends Client {
         NamedCache usersCache = CacheFactory.getCache("users");
         NamedCache postsCache = CacheFactory.getCache("posts");
 
-        usersCache.addIndex(new ReflectionExtractor("getAge"), true, null);
+        usersCache.addIndex(User.EXTRACTOR_AGE, true, null);
 
-        postsCache.addIndex(new ReflectionExtractor("getOwnerUserId"), false, null);
-        postsCache.addIndex(new ReflectionExtractor("getCreationDate"), true, null);
+        postsCache.addIndex(Post.EXTRACTOR_OWNER_USER_ID, false, null);
+        postsCache.addIndex(Post.EXTRACTOR_CREATION_DATE, true, null);
 
         preloadAll(usersCache, postsCache);
     }

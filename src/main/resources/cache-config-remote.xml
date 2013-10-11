@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<!DOCTYPE cache-config SYSTEM "cache-config.dtd">
+<cache-config>
+
+  <caching-scheme-mapping>
+
+    <cache-mapping>
+      <cache-name>posts</cache-name>
+      <scheme-name>cache-near-remote</scheme-name>
+    </cache-mapping>
+
+    <cache-mapping>
+      <cache-name>users</cache-name>
+      <scheme-name>cache-near-remote</scheme-name>
+    </cache-mapping>
+
+  </caching-scheme-mapping>
+
+  <caching-schemes>
+
+    <near-scheme>
+      <scheme-name>cache-near-remote</scheme-name>
+
+      <front-scheme>
+        <local-scheme>
+          <eviction-policy>HYBRID</eviction-policy>
+          <high-units>3</high-units>
+        </local-scheme>
+      </front-scheme>
+
+      <back-scheme>
+        <remote-cache-scheme>
+          <scheme-ref>cache-distributed-remote</scheme-ref>
+        </remote-cache-scheme>
+      </back-scheme>
+
+      <invalidation-strategy>present</invalidation-strategy>
+      <autostart>true</autostart>
+    </near-scheme>
+
+    <remote-cache-scheme>
+      <scheme-name>cache-distributed-remote</scheme-name>
+      <service-name>ExtendTcpCacheService</service-name>
+      <initiator-config>
+        <tcp-initiator>
+          <remote-addresses>
+            <socket-address>
+              <address>204.51.236.61</address>
+              <port>11200</port>
+            </socket-address>
+          </remote-addresses>
+          <connect-timeout>10s</connect-timeout>
+        </tcp-initiator>
+        <outgoing-message-handler>
+          <request-timeout>30m</request-timeout>
+        </outgoing-message-handler>
+
+        <serializer>
+          <class-name>com.tangosol.io.pof.ConfigurablePofContext</class-name>
+          <init-params>
+            <init-param>
+              <param-value>pof-config.xml</param-value>
+              <param-type>String</param-type>
+            </init-param>
+          </init-params>
+        </serializer>
+      </initiator-config>
+    </remote-cache-scheme>
+  </caching-schemes>
+</cache-config>

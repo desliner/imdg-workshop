@@ -11,11 +11,16 @@ public class Storage {
     public void main() {
         configure();
         run();
+        System.exit(0);
     }
 
     protected void configure() {
         System.setProperty("tangosol.coherence.override", "coherence-override.xml");
-        System.setProperty("tangosol.coherence.cacheconfig", "cache-config.xml");
+        if (System.getProperty("imdg.remote") != null) {
+            System.setProperty("tangosol.coherence.cacheconfig", "cache-config-remote.xml");
+        } else {
+            System.setProperty("tangosol.coherence.cacheconfig", "cache-config.xml");
+        }
     }
 
     protected void run() {

@@ -113,4 +113,39 @@ public class CompressingStringCodec implements ReflectionPofSerializer.ObjectPro
     public String extract(PofValue cursor, String path, Object[] valueOut) throws IOException {
         throw new UnsupportedOperationException(); //TODO
     }
+
+
+    // PUBLIC STATIC INTERFACE
+    // TODO: REFACTOR
+    private static final CompressingStringCodec INSTANCE = new CompressingStringCodec();
+
+    public static byte[] compress(String string) throws IOException {
+        return INSTANCE.compressInternal(string);
+    }
+
+    public static String decompress(byte[] bytes) throws IOException {
+        return INSTANCE.decompressInternal(bytes);
+    }
+
+    private byte[] compressInternal(String string) throws IOException {
+        byte[] result = null;
+        if (string != null) {
+            byte[] stringBytes = string.getBytes(Charset.defaultCharset());
+            byte[] compressedBytes = compress(stringBytes);
+            result = new byte[4 + compressedBytes.length];
+            setInt(result, stringBytes.length);
+            System.arraycopy(compressedBytes, 0, result, 4, compressedBytes.length);
+        }
+        return result;
+    }
+
+    private String decompressInternal(byte[] bytes) throws IOException {
+        String result = null;
+        if (bytes != null) {
+            int length = getInt(bytes);
+            byte[] decompressedBytes = decompress(bytes, 4, length);
+            result = new String(decompressedBytes, Charset.defaultCharset());
+        }
+        return result;
+    }
 }
