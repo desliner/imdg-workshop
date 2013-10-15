@@ -12,10 +12,16 @@
 
     <multicast-listener>
       <time-to-live system-property="tangosol.coherence.ttl">4</time-to-live>
-      <join-timeout-milliseconds>10000</join-timeout-milliseconds>
+      <join-timeout-milliseconds system-property="imdg.timeout.join">10000</join-timeout-milliseconds>
       <address system-property="tangosol.coherence.clusteraddress"></address>
       <port system-property="tangosol.coherence.clusterport"></port>
     </multicast-listener>
+
+    <packet-publisher>
+      <packet-delivery>
+        <timeout-milliseconds system-property="imdg.timeout.packet">300000</timeout-milliseconds>
+      </packet-delivery>
+    </packet-publisher>
   </cluster-config>
 
   <management-config>
@@ -24,7 +30,7 @@
 
   <logging-config>
     <destination system-property="tangosol.coherence.log">log4j</destination>
-    <!--<severity-level system-property="tangosol.coherence.log.level">3</severity-level>-->
+    <severity-level system-property="tangosol.coherence.log.level">9</severity-level>
     <message-format>{text}</message-format>
   </logging-config>
 </coherence>

@@ -45,7 +45,7 @@
         <tcp-initiator>
           <remote-addresses>
             <socket-address>
-              <address>204.51.236.61</address>
+              <address>127.0.0.1</address>
               <port>11200</port>
             </socket-address>
           </remote-addresses>
