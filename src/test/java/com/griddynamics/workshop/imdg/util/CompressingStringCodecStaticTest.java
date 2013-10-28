@@ -32,7 +32,7 @@ import org.junit.Test;
  * @author mmyslyvtsev@griddynamics.com
  * @since 10/11/13
  */
-public class CompressingStringCodecTestStatic {
+public class CompressingStringCodecStaticTest {
 
     @Test
     public void test() throws Exception {
