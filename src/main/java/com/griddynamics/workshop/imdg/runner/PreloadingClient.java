@@ -48,8 +48,4 @@ public class PreloadingClient extends Client {
             log.error("Error while preloading", e);
         }
     }
-
-    public static void main(String[] args) {
-        new PreloadingClient().main();
-    }
 }

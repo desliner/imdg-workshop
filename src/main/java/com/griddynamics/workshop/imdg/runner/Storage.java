@@ -6,9 +6,9 @@ import com.tangosol.net.DefaultCacheServer;
  * @author mmyslyvtsev@griddynamics.com
  * @since 9/6/13
  */
-public class Storage {
+public class Storage extends AbstractRunner {
 
-    public void main() {
+    protected void main() {
         configure();
         run();
         System.exit(0);
@@ -33,9 +33,5 @@ public class Storage {
                 break;
             }
         }
-    }
-
-    public static void main(String[] args) throws Exception {
-        new Storage().main();
     }
 }
